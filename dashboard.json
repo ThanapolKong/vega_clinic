@@ -1,0 +1,49 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://raw.githubusercontent.com/ThanapolKong/vega_clinic/main/district.json",
+    "format": {"type": "topojson", "feature": "geodata"}
+  },
+  "transform": [
+    {
+      "lookup": "properties.dcode",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/ThanapolKong/vega_clinic/main/clinic.csv"
+        },
+        "key": "dcode",
+        "fields": ["num_clinic"]
+      }
+    }
+  ],
+  "hconcat": [
+    {
+      "width": 300,
+      "height": 300,
+      "projection": {"type": "Mercator"},
+      "mark": {"type": "geoshape"},
+      "encoding": {
+        "color": {"field": "num_clinic", "type": "quantitative"},
+        "opacity": {"condition": {"param": "pts", "value": "1"}, "value": 0.3}
+      }
+    },
+    {
+      "width": 300,
+      "height": 300,
+      "mark": "bar",
+      "params": [
+        {
+          "name": "pts",
+          "select": {"type": "point", "encodings": ["x"], "on": "mouseover"}
+        }
+      ],
+      "encoding": {
+        "x": {"field": "properties.dcode", "type": "nominal"},
+        "y": {"field": "num_clinic", "type": "quantitative"},
+        "color": {"field": "num_clinic", "type": "quantitative"},
+        "opacity": {"condition": {"param": "pts", "value": 1}, "value": 0.5}
+      }
+    }
+  ],
+  "config": {}
+}
